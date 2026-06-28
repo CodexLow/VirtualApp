@@ -12,21 +12,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Create local.properties
-        run: echo "sdk.dir=$ANDROID_HOME" > VirtualApp/local.properties
-
-      # 🛠️ STEP 1: Use Java 17 to run sdkmanager (it refuses to run on Java 8)
+      # 🛠️ STEP 1: Use Java 17 just to install the SDK tools and NDK
       - name: Set up JDK 17 for sdkmanager
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Install old Android SDK components (using Java 17)
+      - name: Install old Android SDK & NDK components
         run: |
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;25.0.0" "platforms;android-25"
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;25.0.0" "platforms;android-25" "ndk;21.4.7075529"
 
-      # 🛠️ STEP 2: Switch back to Java 8 for the actual Gradle 4.1 build
+      # 🛠️ STEP 2: Create local.properties with both SDK AND NDK paths
+      - name: Create local.properties
+        run: |
+          echo "sdk.dir=$ANDROID_HOME" > VirtualApp/local.properties
+          echo "ndk.dir=$ANDROID_HOME/ndk/21.4.7075529" >> VirtualApp/local.properties
+
+      # 🛠️ STEP 3: Switch back to Java 8 for the actual Gradle 4.1 build
       - name: Set up JDK 8 for Gradle build
         uses: actions/setup-java@v4
         with:
