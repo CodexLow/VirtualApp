@@ -12,15 +12,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      # 🔥 FIX: Use Java 8, because Gradle 4.1 is too old for 11 or 17!
+      - name: Set up JDK 8
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '8'
           distribution: 'temurin'
 
-      # 🛠️ FIX: We are switching to the 'VirtualApp' folder first
       - name: Grant execute permission for gradlew
         run: cd VirtualApp && chmod +x gradlew
+
+      # Creates local.properties so the SDK is found
+      - name: Create local.properties
+        run: echo "sdk.dir=$ANDROID_HOME" > VirtualApp/local.properties
 
       - name: Build debug APK
         run: cd VirtualApp && ./gradlew assembleDebug
