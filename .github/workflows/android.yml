@@ -24,10 +24,10 @@ jobs:
       - name: Create local.properties
         run: echo "sdk.dir=$ANDROID_HOME" > VirtualApp/local.properties
 
-      # 🛠️ Fix: Install the old SDK tools required by Gradle 4.1
+      # 🛠️ FIXED PATH: Using the new cmdline-tools location
       - name: Install old Android SDK components
         run: |
-          yes | $ANDROID_HOME/tools/bin/sdkmanager "build-tools;25.0.0" "platforms;android-25"
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;25.0.0" "platforms;android-25"
 
       - name: Build debug APK
         run: cd VirtualApp && ./gradlew assembleDebug
